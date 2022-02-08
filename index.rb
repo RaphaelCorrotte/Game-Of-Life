@@ -29,7 +29,8 @@ class LifeGame < Gosu::Window
     :PAUSE => [[10, 75], [85, 115]],
     :NEXT => [[10, 130], [85, 170]],
     :CLEAR => [[10, 185], [85, 225]],
-    :LEAVE => [[10, 240], [85, 280]],
+    :RESET => [[10, 240], [85, 280]],
+    :LEAVE => [[10, 295], [85, 335]],
   ]
   attr_accessor :launched
 
@@ -38,6 +39,7 @@ class LifeGame < Gosu::Window
     self.caption = "Game of Life"
     self.text_input = Gosu::TextInput.new
     @font = Gosu::Font.new(50)
+    @count = 0
     @cells = Array.new(X_CELLS_COUNT * Y_CELLS_COUNT)
     @buttons = Hash[
       :CLEAR => Hash[
@@ -59,6 +61,10 @@ class LifeGame < Gosu::Window
       :NEXT => Hash[
         :button => Gosu::Image.new("images/next.png", :tileable => true),
         :clicked_button => Gosu::Image.new("images/clicked_next.png", :tileable => true)
+      ],
+      :RESET => Hash[
+        :button => Gosu::Image.new("images/reset.png", :tileable => true),
+        :clicked_button => Gosu::Image.new("images/clicked_reset.png", :tileable => true)
       ]
     ]
     cell = 0
@@ -101,6 +107,7 @@ class LifeGame < Gosu::Window
       cell.status = cell.next_status
       cell.next_status = nil
     end
+    @count += 1
   end
 
   def draw
@@ -133,6 +140,16 @@ class LifeGame < Gosu::Window
     else
       @buttons[:PAUSE][:clicked_button].draw(BUTTONS[:PAUSE][0][0], BUTTONS[:PAUSE][0][1], 0)
     end
+
+    if @count < 10
+      @font.draw_text(@count.to_s, 20, 500, 2, 1.2, 1.2, Gosu::Color::BLACK)
+    elsif @count < 100
+        @font.draw_text(@count.to_s, 15, 500, 2, 1.1, 1.1, Gosu::Color::BLACK)
+    elsif @count < 1000
+      @font.draw_text(@count.to_s, 10, 500, 2, 1, 1, Gosu::Color::BLACK)
+    else
+      @font.draw_text(@count.to_s, 5, 500, 2, 0.9, 0.9, Gosu::Color::BLACK)
+    end
   end
 
   def button_down(id)
@@ -156,6 +173,11 @@ class LifeGame < Gosu::Window
           update
           @launched = false
         end.call
+      end
+      if button == :RESET
+        @count = 0
+        @launched = false
+        @cells.each { |c| c.status = :dead }
       end
     when Gosu::MsRight
       @launched = @launched ? false : true
