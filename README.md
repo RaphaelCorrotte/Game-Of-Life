@@ -1,4 +1,4 @@
-![Game of Life](images/GAME OF LIFE.png)
+![Game of Life](images/GAME%20OF%20LIFE.png)
 
 ##To run the game of life, install the required dependencies with the `bundle install` command.
 ##Then, run the file named `index.rb`. A window like that will appear.
